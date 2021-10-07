@@ -11,6 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type SpeciesDoc struct {
+	ID        string    `bson:"_id,omitempty"`
+	CreatedAt time.Time `bson:"created_at"`
+	Food      []string  `bson:"food"`
+}
+
 type AnimalDoc struct {
 	Name    string            `bson:"name,omitempty"`
 	Age     int               `bson:"age,omitempty"`
@@ -85,17 +91,49 @@ func InsertManyDocument(docs []interface{}) {
 	fmt.Println("insert multiple document: ", result.InsertedIDs)
 }
 
-func FindDocumnet(filter interface{}) {
+func FindOneDocumnet(filter interface{}) interface{} {
+	// var result bson.D
+	var result interface{}
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			fmt.Println("no find")
+		}
+		panic(err)
+	}
+	// fmt.Printf("%v\n", result)
+	// fmt.Printf("%s\n", reflect.TypeOf(result))
+
+	// var resultMap = result.(bson.D).Map()
+	// fmt.Printf("%v\n", resultMap)
+	// fmt.Printf("%v\n", resultMap["age"])
+	// fmt.Printf("%s\n", reflect.TypeOf(resultMap))
+
+	// output, err := json.MarshalIndent(result, "", "    ")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Printf("%s\n", output)
+
+	return result
+}
+
+func FindManyDocumnet(filter interface{}) []interface{} {
 	cur, currErr := collection.Find(ctx, filter)
 	if currErr != nil {
 		panic(currErr)
 	}
 	defer cur.Close(ctx)
-	var animals []AnimalDoc
-	if err := cur.All(ctx, &animals); err != nil {
+
+	// var animals []AnimalDoc
+	var results []interface{}
+	if err := cur.All(ctx, &results); err != nil {
 		panic(err)
 	}
-	fmt.Println("find document:", animals)
+
+	// fmt.Println("find many document:", results)
+
+	return results
 }
 
 func UpdateOneDucmnet(filter interface{}, update interface{}) {
