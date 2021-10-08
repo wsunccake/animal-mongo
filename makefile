@@ -19,8 +19,14 @@ build: fmt
 
 .PHONY: clean
 clean:
+	go clean
 	rm animal-mongo
 
 .PHONY: run
 run: build
 	./animal-mongo
+
+.PHONY: test
+test:
+	go clean
+	go test ./...

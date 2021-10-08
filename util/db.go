@@ -1,4 +1,4 @@
-package utils
+package util
 
 import (
 	"context"
@@ -10,19 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-type SpeciesDoc struct {
-	ID        string    `bson:"_id,omitempty"`
-	CreatedAt time.Time `bson:"created_at"`
-	Food      []string  `bson:"food"`
-}
-
-type AnimalDoc struct {
-	Name    string            `bson:"name,omitempty"`
-	Age     int               `bson:"age,omitempty"`
-	Species string            `bson:"species"`
-	Size    map[string]string `bson:"size"`
-}
 
 var (
 	err        error
